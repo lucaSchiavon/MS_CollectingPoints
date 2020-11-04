@@ -1,4 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using MS_CollectingPoints.Data
+
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+
 
 <div class="sidebar">
     <NavMenu />
@@ -6,10 +12,29 @@
 
 <div class="main">
     <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <AuthorizeView>
+            <Authorized>
+                <a href="/index" @onclick="(()=> Logout())" target="_blank">Logout</a>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/index" target="_blank">Login</a>
+            </NotAuthorized>
+        </AuthorizeView>
+
+
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+@code {
+
+
+    public async Task Logout()
+    {
+        CustomAuthenticationStateProvider objCustomAuthenticationStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
+        objCustomAuthenticationStateProvider.MarkUserAsLoggedOut();
+        //NavigationManager.NavigateTo("/");
+    }
+}

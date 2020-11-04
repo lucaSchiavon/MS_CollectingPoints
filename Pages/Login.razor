@@ -1,33 +1,41 @@
 ﻿@layout LoginLayout
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+
+@using MS_CollectingPoints.DataLayer.Data.Entities
+@using MS_CollectingPoints.Data;
+@using System.Security.Claims;
+
 @page "/"
 
-
 @*<div>
-    <br /><br /><br /><br /><br />
-</div>
-<div>
-    <h3 style="font-weight:bold; color:purple">Book Stores Login</h3>
-</div>
-<div>
+        <br /><br /><br /><br /><br />
+    </div>
+    <div>
+        <h3 style="font-weight:bold; color:purple">Book Stores Login</h3>
+    </div>
+    <div>
+        <br />
+    </div>
+    <div class="col-12 row">
+        <input class="form-control col-12" placeholder="email address" />
+    </div>
     <br />
-</div>
-<div class="col-12 row">
-    <input class="form-control col-12" placeholder="email address" />
-</div>
-<br />
-<div class="col-12 row">
-    <input type="password" class="form-control col-12" placeholder="password" />
-</div>
-<br />
-<div class="col-12 row">
-    <span class="col-12"></span>
-    <input type="submit" class="form-control col-6 btn btn-primary" value="Login" />
-    <a href="/signup" class="col-3">Sign up</a>
-</div>
-<br />
-<div class="col-12 row" style="text-align:left; font-weight:bold">
-    <span class="col-12"></span>
-</div>*@
+    <div class="col-12 row">
+        <input type="password" class="form-control col-12" placeholder="password" />
+    </div>
+    <br />
+    <div class="col-12 row">
+        <span class="col-12"></span>
+        <input type="submit" class="form-control col-6 btn btn-primary" value="Login" />
+        <a href="/signup" class="col-3">Sign up</a>
+    </div>
+    <br />
+    <div class="col-12 row" style="text-align:left; font-weight:bold">
+        <span class="col-12"></span>
+    </div>*@
 
 
 <div class="wrapper fadeInDown">
@@ -39,19 +47,59 @@
         </div>
 
         <!-- Login Form -->
-        <form>
-            <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-            <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-            <input type="submit" class="fadeIn fourth" value="Log In">
-        </form>
-
+        <EditForm Model="@user" OnValidSubmit="@ValidateUser">
+          
+                <input type="text" id="login" class="fadeIn second" @bind="user.UserName" name="login" placeholder="login">
+                <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
+                <input type="submit" class="fadeIn fourth" value="Log In">
+            
+        </EditForm>
         @*<!-- Remind Passowrd-->
-        <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
-        </div>*@
+            <div id="formFooter">
+                <a class="underlineHover" href="#">Forgot Password?</a>
+            </div>*@
 
     </div>
 </div>
 @code {
+    private ApplicationUser user;
+    ClaimsPrincipal claimsPrincipal;
 
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+
+    protected  override Task OnInitializedAsync()
+    {
+        user = new ApplicationUser();
+        return base.OnInitializedAsync();
+        //claimsPrincipal = (await authenticationStateTask).User;
+
+        //if (claimsPrincipal.Identity.IsAuthenticated)
+        //{
+        //    NavigationManager.NavigateTo("/index");
+        //}
+        //else
+        //{
+        //    await ValidateUser();
+        //}
+
+
+    }
+
+    private async Task<bool> ValidateUser()
+    {
+        //******************qui validiamo l'utente sfruttando l'asp net identity
+
+
+        CustomAuthenticationStateProvider objCustomAuthenticationStateProvider=(CustomAuthenticationStateProvider)AuthenticationStateProvider;
+
+        objCustomAuthenticationStateProvider.MarkUserAsAuthenticated(user.UserName);
+
+        await sessionStorage.SetItemAsync("xxx",user.UserName);
+
+        NavigationManager.NavigateTo("/index");
+
+        return await Task.FromResult(true);
+    }
 }

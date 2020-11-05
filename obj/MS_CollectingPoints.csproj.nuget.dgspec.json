@@ -123,6 +123,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Blazored.LocalStorage": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
             "Blazored.SessionStorage": {
               "target": "Package",
               "version": "[1.0.12, )"

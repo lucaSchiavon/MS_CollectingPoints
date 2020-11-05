@@ -102,6 +102,7 @@ D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\bin\Debug\netcorea
 D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Metadata.dll
 D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\bin\Debug\netcoreapp3.1\Microsoft.JSInterop.dll
 D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\bin\Debug\netcoreapp3.1\System.Text.Json.dll
+D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\bin\Debug\netcoreapp3.1\Blazored.LocalStorage.dll
 D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\obj\Debug\netcoreapp3.1\MS_CollectingPoints.csproj.CoreCompileInputs.cache
 D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\obj\Debug\netcoreapp3.1\MS_CollectingPoints.MvcApplicationPartsAssemblyInfo.cs
 D:\L_SCHIAVON_DOCUMENTS\LAVORO\GIT\BLAZOR\MS_CollectingPoints\obj\Debug\netcoreapp3.1\MS_CollectingPoints.MvcApplicationPartsAssemblyInfo.cache

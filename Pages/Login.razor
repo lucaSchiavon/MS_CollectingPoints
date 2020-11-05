@@ -2,6 +2,8 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
 
 
 @using MS_CollectingPoints.DataLayer.Data.Entities
@@ -9,7 +11,6 @@
 @using System.Security.Claims;
 
 @page "/"
-
 @*<div>
         <br /><br /><br /><br /><br />
     </div>
@@ -49,10 +50,19 @@
         <!-- Login Form -->
         <EditForm Model="@user" OnValidSubmit="@ValidateUser">
           
-                <input type="text" id="login" class="fadeIn second" @bind="user.UserName" name="login" placeholder="login">
-                <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-                <input type="submit" class="fadeIn fourth" value="Log In">
-            
+          
+            <input type="text" id="login" class="fadeIn second" @bind="user.UserName" name="login" placeholder="login">
+            <input type="text" id="password" class="fadeIn third" @bind="user.Password" name="login" placeholder="password">
+            @if (MessageIsVisible)
+            {
+                <div class="alert alert-danger msg-login" role="alert">
+                    @Message
+                </div>
+            }
+
+
+            <input type="submit" class="fadeIn fourth" value="Log In">
+
         </EditForm>
         @*<!-- Remind Passowrd-->
             <div id="formFooter">
@@ -62,16 +72,18 @@
     </div>
 </div>
 @code {
-    private ApplicationUser user;
+    private LoginVM user;
+    private string Message;
+    private bool MessageIsVisible;
     ClaimsPrincipal claimsPrincipal;
 
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
 
 
-    protected  override Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        user = new ApplicationUser();
+        user = new LoginVM();
         return base.OnInitializedAsync();
         //claimsPrincipal = (await authenticationStateTask).User;
 
@@ -92,14 +104,59 @@
         //******************qui validiamo l'utente sfruttando l'asp net identity
 
 
-        CustomAuthenticationStateProvider objCustomAuthenticationStateProvider=(CustomAuthenticationStateProvider)AuthenticationStateProvider;
 
-        objCustomAuthenticationStateProvider.MarkUserAsAuthenticated(user.UserName);
+        if (!string.IsNullOrEmpty(user.UserName) && !string.IsNullOrEmpty(user.Password))
+        {
 
-        await sessionStorage.SetItemAsync("xxx",user.UserName);
 
-        NavigationManager.NavigateTo("/index");
+            CustomAuthenticationStateProvider objCustomAuthenticationStateProvider = (CustomAuthenticationStateProvider)AuthenticationStateProvider;
 
-        return await Task.FromResult(true);
+            var userByEmail = await UserManager.FindByEmailAsync(user.UserName);
+
+            if (userByEmail != null && await UserManager.CheckPasswordAsync(userByEmail, user.Password))
+            {
+                objCustomAuthenticationStateProvider.MarkUserAsAuthenticated(user.UserName);
+
+                await localStorage.SetItemAsync("UserName", user.UserName);
+
+                NavigationManager.NavigateTo("/index");
+
+                return await Task.FromResult(true);
+            }
+            else
+            {
+                MessageIsVisible = true;
+                Message = "Wrong credentials.";
+                return await Task.FromResult(false);
+            }
+
+            //var result = await SignInManager.PasswordSignInAsync(user.UserName, user.Password, false, lockoutOnFailure: false);
+            //if (result.Succeeded)
+            //{
+            //    objCustomAuthenticationStateProvider.MarkUserAsAuthenticated(user.UserName);
+            //    // await sessionStorage.SetItemAsync("xxx", user.UserName);
+            //    await localStorage.SetItemAsync("UserName", user.UserName);
+
+            //    NavigationManager.NavigateTo("/index");
+
+            //    return await Task.FromResult(true);
+            //}
+            //else
+            //{
+            //    MessageIsVisible = true;
+            //    Message = "Wrong credentials.";
+            //    return await Task.FromResult(false);
+            //}
+
+
+
+        }
+        else
+        {
+            MessageIsVisible = true;
+            Message = "Insert username and password.";
+            return await Task.FromResult(false);
+        }
+
     }
 }

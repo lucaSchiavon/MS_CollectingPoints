@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -13,8 +14,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MS_CollectingPoints.Data;
+using MS_CollectingPoints.DataLayer.Configs;
 using MS_CollectingPoints.DataLayer.Data;
 using MS_CollectingPoints.DataLayer.Data.Entities;
+using MS_CollectingPoints.DataLayer.Data;
 
 namespace MS_CollectingPoints
 {
@@ -33,27 +36,36 @@ namespace MS_CollectingPoints
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-
+            
             #region "DbContext"
             services.AddDbContext<CollectingPointsDbContext>(options => 
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<ApplicationUser>(options =>
+            //services.AddDefaultIdentity<ApplicationUser>(options =>
+            //{
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireDigit = false;
+            //    options.Password.RequiredLength = 8;
+            //}).AddEntityFrameworkStores<CollectingPointsDbContext>();
+
+
+            services.AddIdentity<ApplicationUser,ApplicationRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 8;
             }).AddEntityFrameworkStores<CollectingPointsDbContext>();
-
             #endregion
+
             services.AddBlazoredSessionStorage();
+            services.AddBlazoredLocalStorage();
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
             services.AddSingleton<WeatherForecastService>();
-            
-            
+
+            services.Configure<UserAdminConfig>(Configuration.GetSection("UserAdmin"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CollectingPointsDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -80,6 +92,9 @@ namespace MS_CollectingPoints
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+
+            dbContext.Database.Migrate();
         }
     }
 }

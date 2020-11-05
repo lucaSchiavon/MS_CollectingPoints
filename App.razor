@@ -1,7 +1,14 @@
 ﻿@using MS_CollectingPoints.Shared
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" >
+        <NotAuthorized>
+            <h4>Not authorized customized.</h4>
+        </NotAuthorized>
+        <Authorizing>
+            <h4>Authentication in progress customized...</h4>
+        </Authorizing>
+           </AuthorizeRouteView>
     </Found>
     <NotFound>
         <CascadingAuthenticationState>

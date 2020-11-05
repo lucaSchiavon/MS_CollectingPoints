@@ -1,4 +1,5 @@
-﻿using Blazored.SessionStorage;
+﻿using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
@@ -11,16 +12,20 @@ namespace MS_CollectingPoints.Data
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private ISessionStorageService _sessionStorageService;
+        private ILocalStorageService _localStorageService;
 
-        public CustomAuthenticationStateProvider(ISessionStorageService sessionStorageService)
+        public CustomAuthenticationStateProvider(ISessionStorageService sessionStorageService, ILocalStorageService localStorageService)
         {
             _sessionStorageService = sessionStorageService;
+            _localStorageService = localStorageService;
         }
 
         public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-
-            var userName = await _sessionStorageService.GetItemAsync<string>("xxx");
+            //int lunghezza = await _sessionStorageService.LengthAsync();
+            //var userName = await _sessionStorageService.GetItemAsync<string>("xxx");
+            var userName = await _localStorageService.GetItemAsync<string>("UserName");
+            //int lunghezza2 = await _sessionStorageService.LengthAsync();
             //var userName = "pippo";
 
             ClaimsIdentity identity;
@@ -50,10 +55,28 @@ namespace MS_CollectingPoints.Data
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
 
         }
-        public void MarkUserAsLoggedOut()
+        //public void MarkUserAsLoggedOut()
+        ////{
+
+        //    // _sessionStorageService.RemoveItemAsync("xxx");
+       
+        //    _sessionStorageService.ClearAsync();
+        //    //_sessionStorageService.RemoveItemAsync("xxx");
+            
+
+        //    var identity = new ClaimsIdentity();
+        //    var user = new ClaimsPrincipal(identity);
+        //    NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        //}
+        public async void MarkUserAsLoggedOut()
         {
-           
-            _sessionStorageService.RemoveItemAsync("xxx");
+
+            // _sessionStorageService.RemoveItemAsync("xxx");
+            //int lunghezza = await _sessionStorageService.LengthAsync();
+            //await _sessionStorageService.ClearAsync();
+           await _localStorageService.RemoveItemAsync("UserName");
+            //_sessionStorageService.RemoveItemAsync("xxx");
+            //int lunghezza2 = await _sessionStorageService.LengthAsync();
 
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);

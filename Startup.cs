@@ -18,6 +18,8 @@ using MS_CollectingPoints.DataLayer.Configs;
 using MS_CollectingPoints.DataLayer.Data;
 using MS_CollectingPoints.DataLayer.Data.Entities;
 using MS_CollectingPoints.DataLayer.Data;
+using MS_CollectingPoints.BusinessLayer.Managers;
+using Entities = MS_CollectingPoints.DataLayer.Data.Entities;
 
 namespace MS_CollectingPoints
 {
@@ -40,14 +42,7 @@ namespace MS_CollectingPoints
             #region "DbContext"
             services.AddDbContext<CollectingPointsDbContext>(options => 
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            //services.AddDefaultIdentity<ApplicationUser>(options =>
-            //{
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequireDigit = false;
-            //    options.Password.RequiredLength = 8;
-            //}).AddEntityFrameworkStores<CollectingPointsDbContext>();
-
-
+          
             services.AddIdentity<ApplicationUser,ApplicationRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = false;
@@ -56,9 +51,13 @@ namespace MS_CollectingPoints
             }).AddEntityFrameworkStores<CollectingPointsDbContext>();
             #endregion
 
-            services.AddBlazoredSessionStorage();
+            //services.AddBlazoredSessionStorage();
             services.AddBlazoredLocalStorage();
             services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+
+           
+            services.AddScoped<IAppManager, AppManager>();
+            services.AddScoped<ICampaignManager, CampaignManager>();
             services.AddSingleton<WeatherForecastService>();
 
             services.Configure<UserAdminConfig>(Configuration.GetSection("UserAdmin"));

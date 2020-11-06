@@ -1,20 +1,21 @@
 ﻿@page "/index"
 @using System.Security.Claims
-
-
+@using Entities = MS_CollectingPoints.DataLayer.Data.Entities
+@inject MS_CollectingPoints.BusinessLayer.Managers.IAppManager AppManager
+@inject MS_CollectingPoints.BusinessLayer.Managers.ICampaignManager CampaignManager
 @*<AuthorizeRouteView>
 
-    <NotAuthorized>
+        <NotAuthorized>
 
-    </NotAuthorized>
-</AuthorizeRouteView>*@
+        </NotAuthorized>
+    </AuthorizeRouteView>*@
 
 @if (IsUserAuthenticated)
 {
     <h3><b>@user.Identity.Name</b> is logged in!!!</h3>
     @*<br />
-    <p>Is Publisher : @IsPublisher</p>
-    <p>Is Senior Employee : @IsSeniorEmployee</p>*@
+        <p>Is Publisher : @IsPublisher</p>
+        <p>Is Senior Employee : @IsSeniorEmployee</p>*@
 }
 else
 {
@@ -39,6 +40,12 @@ else
         if (user.Identity.IsAuthenticated)
             IsUserAuthenticated = true;
 
+
+        List<Entities.App> LstApp3 = AppManager.GetAllBasePageEntities().ToList();
+
+        CampaignManager.AddCampaign(new Entities.Campaign() {CampaignName="campagna2",IdApp=1 });
+
+        
         //if (user.IsInRole("Publisher"))
         //    IsPublisher = true;
 

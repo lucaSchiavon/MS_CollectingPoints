@@ -1,7 +1,6 @@
 ﻿@layout LoginLayout
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> UserManager
 
@@ -85,17 +84,7 @@
     {
         user = new LoginVM();
         return base.OnInitializedAsync();
-        //claimsPrincipal = (await authenticationStateTask).User;
-
-        //if (claimsPrincipal.Identity.IsAuthenticated)
-        //{
-        //    NavigationManager.NavigateTo("/index");
-        //}
-        //else
-        //{
-        //    await ValidateUser();
-        //}
-
+       
 
     }
 
@@ -130,25 +119,7 @@
                 return await Task.FromResult(false);
             }
 
-            //var result = await SignInManager.PasswordSignInAsync(user.UserName, user.Password, false, lockoutOnFailure: false);
-            //if (result.Succeeded)
-            //{
-            //    objCustomAuthenticationStateProvider.MarkUserAsAuthenticated(user.UserName);
-            //    // await sessionStorage.SetItemAsync("xxx", user.UserName);
-            //    await localStorage.SetItemAsync("UserName", user.UserName);
-
-            //    NavigationManager.NavigateTo("/index");
-
-            //    return await Task.FromResult(true);
-            //}
-            //else
-            //{
-            //    MessageIsVisible = true;
-            //    Message = "Wrong credentials.";
-            //    return await Task.FromResult(false);
-            //}
-
-
+           
 
         }
         else
